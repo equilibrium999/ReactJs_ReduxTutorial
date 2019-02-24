@@ -4,12 +4,13 @@ import TaskForm from "./components/TaskForm";
 import Control from "./components/Control";
 import TaskList from "./components/TaskList";
 import _ from "lodash"
+import { connect } from "react-redux";
+import * as actions from "./actions/index";
 
 class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isFormOpen: false,
             taskEditing: null,
             filter: {
                 name: "",
@@ -21,32 +22,21 @@ class App extends Component {
         };
     }
 
-     s4() {
-        return Math.floor((1+Math.random()) * 0x10000).toString(16).substring(1);
-    } 
-
-    generateId(){
-        return this.s4() + this.s4() + "-" + this.s4() + "-" + this.s4() + "-" + this.s4() + "-" + this.s4() + this.s4() + this.s4();
-    }
+     
     
     onToggleForm = () => {
-        if (this.state.isFormOpen && this.state.taskEditing !== null) {
-            this.setState({
-                isFormOpen: true,
-                taskEditing: null
-            });
-        } else {
-            this.setState({
-                isFormOpen: !this.state.isFormOpen,
-                taskEditing: null
-            });
-        }
-    }
-
-    onCloseForm = () => {
-        this.setState({
-            isFormOpen: false
-        });
+        // if (this.state.isFormOpen && this.state.taskEditing !== null) {
+        //     this.setState({
+        //         isFormOpen: true,
+        //         taskEditing: null
+        //     });
+        // } else {
+        //     this.setState({
+        //         isFormOpen: !this.state.isFormOpen,
+        //         taskEditing: null
+        //     });
+        // }
+        this.props.onToggleForm();
     }
 
     onShowForm = () => {
@@ -54,23 +44,7 @@ class App extends Component {
             isFormOpen: true
         });
     }
-
-    onSubmit = (data) => {
-        var {tasks} = this.state;
-        if (data.id) {
-            var index = this.findIndex(data.id);
-            tasks[index] = data;
-        } else {
-            data.id = this.generateId();
-            tasks.push(data);
-        }
-        this.setState({
-            tasks: tasks,
-            taskEditing: null
-        });
-        localStorage.setItem("tasks",JSON.stringify(tasks));
-    }
-
+ 
     onUpdateStatus = (id) => {
         var { tasks } = this.state;
         var index = _.findIndex(tasks, (task) => {
@@ -145,8 +119,8 @@ class App extends Component {
     }
     
   render() {
-      var {isFormOpen, taskEditing, filter, keyword, sortBy, sortValue}=this.state;
-
+      var {taskEditing, filter, keyword, sortBy, sortValue}=this.state;
+      var {isFormOpen} = this.props;
     //   if (filter) {
     //     if (filter.name) {
     //         tasks = _.filter(tasks, function(task) { return task.name.toLowerCase().indexOf(filter.name) !== -1; });
@@ -182,7 +156,7 @@ class App extends Component {
     //   }
       
  
-      var elmTaskForm = isFormOpen ? <TaskForm onSubmit={this.onSubmit} onCloseForm={this.onCloseForm} task={taskEditing}/> : "";
+      var elmTaskForm = isFormOpen ? <TaskForm task={taskEditing}/> : "";
     return (
       <div className="container">
         <div className="text-center">
@@ -209,4 +183,18 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+    return {
+        isFormOpen: state.isFormOpen
+    };
+}
+
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        "onToggleForm": () => {
+            dispatch(actions.toggle_form());
+        }        
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
