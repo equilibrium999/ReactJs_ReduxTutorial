@@ -45,22 +45,6 @@ class App extends Component {
         });
     }
  
-    onUpdateStatus = (id) => {
-        var { tasks } = this.state;
-        var index = _.findIndex(tasks, (task) => {
-            return task.id === id;
-        });
-        // const newTasks = tasks.map(task => {
-        //   if (task.id === id) {
-        //     task.status = !task.status
-        //   }
-        //   return task;
-        // })
-        tasks[index].status = !tasks[index].status;
-        this.setState({tasks: tasks})
-        localStorage.setItem("tasks", JSON.stringify(tasks));
-    }
-
     onUpdateItem = (id) => {
         var {tasks} = this.state;
         var index = this.findIndex(id);
@@ -175,7 +159,7 @@ class App extends Component {
                 {/* Search - Sort */}
                 <Control onSearch={this.onSearch} onSort={this.onSort} sortBy={sortBy} sortValue={sortValue}/>
                 {/* List */}
-                <TaskList onFilter={this.onFilter} onUpdateStatus={this.onUpdateStatus} onUpdateItem={this.onUpdateItem} onDeleteItem={this.onDeleteItem}/>
+                <TaskList onFilter={this.onFilter} onUpdateItem={this.onUpdateItem} onDeleteItem={this.onDeleteItem}/>
             </div>
         </div>
     </div>
