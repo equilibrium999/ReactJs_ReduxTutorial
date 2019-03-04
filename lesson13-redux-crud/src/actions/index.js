@@ -6,13 +6,6 @@ export const list_all = () => {
     };
 };
 
-export const add_task = (task) => {
-    return {
-        "type": types.ADD_TASK,
-        task
-     };
-};
-
 export const toggle_form = () => {
     return {
         "type": types.TOGGLE_FORM
@@ -37,3 +30,24 @@ export const update_status = (id) => {
         id
     };
 };
+
+export const delete_task = (id) => {
+    return {
+        "type": types.DELETE_TASK,
+        id
+    }
+}
+
+export const edit_task = (task) => {
+    return {
+        "type": types.EDIT_TASK,
+        task
+    }
+}
+
+export const submit_task = (task) => {
+    return {
+        "type": types.SUBMIT_TASK,
+        task
+    }
+}

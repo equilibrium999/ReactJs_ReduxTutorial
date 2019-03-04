@@ -5,20 +5,17 @@ import * as actions from "./../actions/index";
 class TaskForm extends Component {
     constructor(props){
         super(props);
-        this.state = {
-            id: "",
-            name: "",
-            status: false
-        };
     }
 
     componentWillMount(){
-        if(this.props.task) {
+        if(this.props.task && this.props.task.id !== null) {
             this.setState({
                 id: this.props.task.id,
                 name: this.props.task.name,
                 status: this.props.task.status
             });
+        } else {
+            this.onClear();
         }
     }
 
@@ -29,12 +26,8 @@ class TaskForm extends Component {
                 name: nextProps.task.name,
                 status: nextProps.task.status
             });
-        } else if (!nextProps.task) {
-            this.setState({
-                id: "",
-                name: "",
-                status: false
-            });
+        } else {
+           this.onClear();
         }
     }
 
@@ -56,8 +49,7 @@ class TaskForm extends Component {
 
     onSubmit = (event) => {
         event.preventDefault();
-        // this.props.onSubmit(this.state);
-        this.props.onAddTask(this.state);
+        this.props.onSubmitTask(this.state);
 
         // Clear fields and close the form
         this.onClear();
@@ -72,7 +64,8 @@ class TaskForm extends Component {
     }
 
   render() {
-    var {id} = this.state; 
+    var {id} = this.state;
+    if (!this.props.isFormOpen) return null;
     return (
     <div className="panel panel-warning">
         <div className="panel-heading">
@@ -105,18 +98,19 @@ class TaskForm extends Component {
 
 const mapStateToProps = state => {
     return {
-
+        "isFormOpen": state.isFormOpen,
+        "task": state.itemEditing
     }
 }
 
 const mapDispatchToProps = (dispatch, props) => {
     return {
-        "onAddTask": (task) => {
-            dispatch(actions.add_task(task));
+        "onSubmitTask": (task) => {
+            dispatch(actions.submit_task(task));
         },
         "onCloseForm": () => {
             dispatch(actions.close_form());
-        }
+        },
     }
 }
 

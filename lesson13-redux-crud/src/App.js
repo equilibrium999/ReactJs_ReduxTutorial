@@ -11,7 +11,6 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            taskEditing: null,
             filter: {
                 name: "",
                 status: -1
@@ -21,22 +20,19 @@ class App extends Component {
             sortValue: 1
         };
     }
-
-     
     
     onToggleForm = () => {
-        // if (this.state.isFormOpen && this.state.taskEditing !== null) {
-        //     this.setState({
-        //         isFormOpen: true,
-        //         taskEditing: null
-        //     });
-        // } else {
-        //     this.setState({
-        //         isFormOpen: !this.state.isFormOpen,
-        //         taskEditing: null
-        //     });
-        // }
-        this.props.onToggleForm();
+        var {itemEditing} = this.props;
+        if (itemEditing && itemEditing.id !== "") {
+            this.props.onOpenForm();
+        } else {
+            this.props.onToggleForm();
+        }
+        this.props.onClearTask({
+            "id": "",
+            "name": "",
+            "status": false
+        });
     }
 
     onShowForm = () => {
@@ -45,28 +41,18 @@ class App extends Component {
         });
     }
  
-    onUpdateItem = (id) => {
-        var {tasks} = this.state;
-        var index = this.findIndex(id);
-        var taskEditing = tasks[index];
-        this.setState({
-            taskEditing: taskEditing
-        });
-        this.onShowForm();
-    }
-
-    onDeleteItem = (id) => {
-       var {tasks} = this.state;
-       var index = this.findIndex(id);
-       if (index !== -1) {
-            tasks.splice(index,1);
-            this.setState({
-                tasks: tasks
-            });
-            localStorage.setItem("tasks",JSON.stringify(tasks));
-       }
-       this.onCloseForm();
-    }
+    // onDeleteItem = (id) => {
+    //    var {tasks} = this.state;
+    //    var index = this.findIndex(id);
+    //    if (index !== -1) {
+    //         tasks.splice(index,1);
+    //         this.setState({
+    //             tasks: tasks
+    //         });
+    //         localStorage.setItem("tasks",JSON.stringify(tasks));
+    //    }
+    //    this.onCloseForm();
+    // }
 
     onFilter = (filterName, filterStatus) => {
         this.setState({
@@ -103,7 +89,7 @@ class App extends Component {
     }
     
   render() {
-      var {taskEditing, filter, keyword, sortBy, sortValue}=this.state;
+      var {filter, keyword, sortBy, sortValue}=this.state;
       var {isFormOpen} = this.props;
     //   if (filter) {
     //     if (filter.name) {
@@ -139,8 +125,7 @@ class App extends Component {
     //     });
     //   }
       
- 
-      var elmTaskForm = isFormOpen ? <TaskForm task={taskEditing}/> : "";
+    var elmTaskForm = isFormOpen ? <TaskForm/> : "";
     return (
       <div className="container">
         <div className="text-center">
@@ -159,7 +144,7 @@ class App extends Component {
                 {/* Search - Sort */}
                 <Control onSearch={this.onSearch} onSort={this.onSort} sortBy={sortBy} sortValue={sortValue}/>
                 {/* List */}
-                <TaskList onFilter={this.onFilter} onUpdateItem={this.onUpdateItem} onDeleteItem={this.onDeleteItem}/>
+                <TaskList onFilter={this.onFilter}/>
             </div>
         </div>
     </div>
@@ -169,7 +154,8 @@ class App extends Component {
 
 const mapStateToProps = state => {
     return {
-        isFormOpen: state.isFormOpen
+        "isFormOpen": state.isFormOpen,
+        "itemEditing": state.itemEditing
     };
 }
 
@@ -177,7 +163,13 @@ const mapDispatchToProps = (dispatch, props) => {
     return {
         "onToggleForm": () => {
             dispatch(actions.toggle_form());
-        }        
+        },
+        "onClearTask": (task) => {
+            dispatch(actions.edit_task(task));
+        },   
+        "onOpenForm": () => {
+            dispatch(actions.open_form());
+        },  
     };
 }
 
