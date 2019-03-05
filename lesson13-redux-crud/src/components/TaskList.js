@@ -1,32 +1,40 @@
 import React, { Component } from 'react';
 import TaskItem from "./TaskItem";
 import { connect } from "react-redux";
+import * as actions from "./../actions/index";
+import _ from "lodash";
 
 class TaskList extends Component {
     constructor(props){
         super(props);
-        this.state = {
-            filterName: "",
-            filterStatus: -1 // All: -1, Activated: 1, Hidden: 0
-        };
     }
 
     onChange = (event) => {
         var target = event.target;
         var name = target.name;
         var value = target.value;
-        this.props.onFilter(
-            name === "filterName" ? value : this.state.filterName,
-            name === "filterStatus" ? value : this.state.filterStatus
-        );
-        this.setState({
-            [name]: value
-        });
+        var filter = {
+            "name": name === "filterName" ? value : this.props.filterTable.name,
+            "status": name === "filterStatus" ? value : this.props.filterTable.status
+        };
+        this.props.onFilterTable(filter);
     }
 
   render() {
-    var {tasks} = this.props;
-    var {filterName, filterStatus} = this.state;
+    var {tasks, filterTable} = this.props;
+    // filter on table
+    if (filterTable.name) {
+        tasks = _.filter(tasks, function(task) { return task.name.toLowerCase().indexOf(filterTable.name) !== -1; });
+    }
+
+    tasks = _.filter(tasks, function(task) { 
+        if (filterTable.status === -1) {
+            return task;
+        } else {
+            return task.status === (filterTable.status === 0 ? false : true);
+        } 
+    });
+
     var elmTask = tasks.map((task, index) => {
         return  <TaskItem key={task.id} index={index} task = {task}/>
     });
@@ -46,10 +54,10 @@ class TaskList extends Component {
                     <tr>
                         <td></td>
                         <td>
-                            <input type="text" className="form-control" name="filterName" value={filterName} onChange={this.onChange}/>
+                            <input type="text" className="form-control" name="filterName" value={this.props.filterTable.name} onChange={this.onChange}/>
                         </td>
                         <td>
-                            <select className="form-control" name="filterStatus" value={filterStatus} onChange={this.onChange}>
+                            <select className="form-control" name="filterStatus" value={this.props.filterTable.status} onChange={this.onChange}>
                                 <option value={-1}>All</option>
                                 <option value={0}>Hidden</option>
                                 <option value={1}>Activated</option>
@@ -68,8 +76,18 @@ class TaskList extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        tasks: state.tasks
+        "tasks": state.tasks,
+        "filterTable": state.filterTable
     };
 }
 
-export default connect(mapStateToProps, null)(TaskList);
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        "onFilterTable": (filter) => {
+            dispatch(actions.filter_task(filter));
+        }
+    };
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskList);

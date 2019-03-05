@@ -51,3 +51,10 @@ export const submit_task = (task) => {
         task
     }
 }
+
+export const filter_task =  (filter) => {
+    return {
+        "type": types.FILTER_TABLE,
+        filter
+    }
+}
