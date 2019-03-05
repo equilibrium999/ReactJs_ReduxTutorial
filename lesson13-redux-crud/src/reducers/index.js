@@ -3,12 +3,14 @@ import tasks from "./tasks";
 import isFormOpen from "./isFormOpen";
 import itemEditing from "./itemEditing";
 import filterTable from "./filterTable";
+import search from "./search";
 
 const myReducer = combineReducers({
     tasks,
     isFormOpen,
     itemEditing,
-    filterTable
+    filterTable,
+    search
 })
 
 export default myReducer;

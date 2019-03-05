@@ -3,10 +3,6 @@ import { connect } from "react-redux";
 import * as actions from "./../actions/index";
 
 class TaskForm extends Component {
-    constructor(props){
-        super(props);
-    }
-
     componentWillMount(){
         if(this.props.task && this.props.task.id !== null) {
             this.setState({

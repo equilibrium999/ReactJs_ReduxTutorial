@@ -5,10 +5,6 @@ import * as actions from "./../actions/index";
 import _ from "lodash";
 
 class TaskList extends Component {
-    constructor(props){
-        super(props);
-    }
-
     onChange = (event) => {
         var target = event.target;
         var name = target.name;
@@ -21,7 +17,7 @@ class TaskList extends Component {
     }
 
   render() {
-    var {tasks, filterTable} = this.props;
+    var {tasks, filterTable, keyword} = this.props;
     // filter on table
     if (filterTable.name) {
         tasks = _.filter(tasks, function(task) { return task.name.toLowerCase().indexOf(filterTable.name) !== -1; });
@@ -34,6 +30,12 @@ class TaskList extends Component {
             return task.status === (filterTable.status === 0 ? false : true);
         } 
     });
+
+    if (keyword) {
+        tasks = tasks.filter((task) => {
+            return task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
+        });
+    }
 
     var elmTask = tasks.map((task, index) => {
         return  <TaskItem key={task.id} index={index} task = {task}/>
@@ -77,7 +79,8 @@ class TaskList extends Component {
 const mapStateToProps = (state) => {
     return {
         "tasks": state.tasks,
-        "filterTable": state.filterTable
+        "filterTable": state.filterTable,
+        "keyword": state.search
     };
 }
 
