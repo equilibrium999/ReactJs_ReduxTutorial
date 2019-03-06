@@ -3,6 +3,15 @@ import { connect } from "react-redux";
 import * as actions from "./../actions/index";
 
 class TaskForm extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            "id": "",
+            "name": "",
+            "status": false
+        };
+    }
+
     componentWillMount(){
         if(this.props.task && this.props.task.id !== null) {
             this.setState({
@@ -59,37 +68,37 @@ class TaskForm extends Component {
         });
     }
 
-  render() {
-    var {id} = this.state;
-    if (!this.props.isFormOpen) return null;
-    return (
-    <div className="panel panel-warning">
-        <div className="panel-heading">
-            <h3 className="panel-title">{id !== "" ? "Edit Task" : "Add Task"}
-            <span className="fa fa-times-circle pull-right" onClick={this.onCloseForm}></span>
-            </h3>
+    render() {
+        var {id} = this.state;
+        if (!this.props.isFormOpen) return null;
+        return (
+        <div className="panel panel-warning">
+            <div className="panel-heading">
+                <h3 className="panel-title">{id !== "" ? "Edit Task" : "Add Task"}
+                <span className="fa fa-times-circle pull-right" onClick={this.onCloseForm}></span>
+                </h3>
+            </div>
+            <div className="panel-body">
+                <form onSubmit={this.onSubmit}>
+                    <div className="form-group">
+                        <label>Name: </label>
+                        <input type="text" className="form-control" name="name" value={this.state.name} onChange={this.onChange}/>
+                    </div>
+                    <label>Status: </label>
+                    <select className="form-control" name="status" value={this.state.status} onChange={this.onChange}>
+                        <option value={true}>Activated</option>
+                        <option value={false}>Hidden</option>
+                    </select>
+                    <br/>
+                    <div className="text-center">
+                        <button type="submit" className="btn btn-warning">{id !== "" ? "Save" : "Add"}</button>&nbsp;
+                        <button type="button" className="btn btn-danger" onClick={this.onClear}>Cancel</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div className="panel-body">
-            <form onSubmit={this.onSubmit}>
-                <div className="form-group">
-                    <label>Name: </label>
-                    <input type="text" className="form-control" name="name" value={this.state.name} onChange={this.onChange}/>
-                </div>
-                <label>Status: </label>
-                <select className="form-control" name="status" value={this.state.status} onChange={this.onChange}>
-                    <option value={true}>Activated</option>
-                    <option value={false}>Hidden</option>
-                </select>
-                <br/>
-                <div className="text-center">
-                    <button type="submit" className="btn btn-warning">{id !== "" ? "Save" : "Add"}</button>&nbsp;
-                    <button type="button" className="btn btn-danger" onClick={this.onClear}>Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    );
-  }
+        );
+    }
 }
 
 const mapStateToProps = state => {

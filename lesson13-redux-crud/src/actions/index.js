@@ -65,3 +65,10 @@ export const search_task =  (keyword) => {
         keyword
     }
 }
+
+export const sort_task =  (sort) => {
+    return {
+        "type": types.SORT,
+        sort
+    }
+}
